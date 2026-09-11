@@ -49,6 +49,6 @@ streamlit run app.py
 
 ## Possible extensions
 
-- Probability calibration (Platt scaling / isotonic regression) for direct use as PD in an IFRS9 context
+- Probability calibration for direct use as PD in an IFRS9 context
 - Fairness analysis on variables such as `person_home_ownership`
 - Decision threshold optimized on the asymmetric cost of false negatives vs false positives, instead of the default 0.5 threshold
