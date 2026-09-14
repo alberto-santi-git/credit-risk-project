@@ -1,6 +1,6 @@
 """
 modeling.py
-Pre-processing (encoding), training and evaluation of credit risk models.
+Preprocessing (encoding), training e valutazione dei modelli di credit risk.
 """
 
 import pandas as pd
@@ -22,9 +22,9 @@ from data_prep import TARGET_COL
 
 def build_preprocessor(feature_cols, X_ref: pd.DataFrame):
     """
-    One-hot encoding for the categorical features in the selected feature set.
-    Categorical columns are identified by the dtype of X_ref (e.g. X_train),
-    rather than from a fixed list, to avoid the risk of overlooking columns such as “loan_grade”.
+    One-hot encoding per le categoriche presenti nel set di feature scelto.
+    Le colonne categoriche sono rilevate dal dtype su X_ref (es. X_train),
+    non da una lista fissa, per non rischiare di dimenticare colonne come 'loan_grade'.
     """
     cat_cols = X_ref[feature_cols].select_dtypes(include="object").columns.tolist()
     num_cols = [c for c in feature_cols if c not in cat_cols]
@@ -61,7 +61,7 @@ MODELS = {
 
 
 def train_and_evaluate(X_train, X_test, y_train, y_test, feature_cols, model_name, cv_folds=5):
-    """Train a model using GridSearchCV (stratified CV) and evaluate it on the test set."""
+    """Allena un modello con GridSearchCV (CV stratificata) e valuta su test set."""
     preprocessor, num_cols, cat_cols = build_preprocessor(feature_cols, X_train)
     base_model, param_grid = MODELS[model_name]
 
@@ -70,7 +70,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, feature_cols, model_nam
         ("clf", base_model),
     ])
 
-    # scale_pos_weight for XGBoost (it does not have a native class_weight as in sklearn) 
+    # scale_pos_weight per XGBoost (non ha class_weight nativo come sklearn)
     if model_name == "xgboost":
         neg, pos = (y_train == 0).sum(), (y_train == 1).sum()
         pipe.set_params(clf__scale_pos_weight=neg / pos)
@@ -96,8 +96,8 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, feature_cols, model_nam
 
 
 def print_results(results: dict):
-    print(f"\n{'='*60}\nModel: {results['model_name']}\n{'='*60}")
-    print(f"Best Hyperparameters: {results['best_params']}")
+    print(f"\n{'='*60}\nModello: {results['model_name']}\n{'='*60}")
+    print(f"Migliori iperparametri: {results['best_params']}")
     print(f"ROC-AUC (CV):   {results['cv_best_roc_auc']:.4f}")
     print(f"ROC-AUC (test): {results['test_roc_auc']:.4f}")
     print(f"PR-AUC  (test): {results['test_pr_auc']:.4f}")
